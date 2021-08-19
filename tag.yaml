@@ -1,5 +1,5 @@
 annotations:
-  kubernetes.io/ingress.class: addon-http-application-routing
+kubernetes.io/ingress.class: addon-http-application-routing
 create: true
 enabled: true
 fullnameOverride: ''
