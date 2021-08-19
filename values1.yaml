@@ -1,0 +1,25 @@
+affinity: {}
+autoscaling:
+  enabled: false
+  maxReplicas: 100
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 80
+configmaps: []
+fullnameOverride: test
+images:
+  pullPolicy: Always
+  repository: rabazhub.azurecr.io/test
+  tag: 13
+nameOverride: test
+nodeSelector: {}
+podAnnotations: {}
+replicaCount: 2
+resources: {}
+service:
+  port: 3000
+  type: ClusterIP
+serviceAccount:
+  annotations: {}
+  create: true
+  name: test
+tolerations: []
