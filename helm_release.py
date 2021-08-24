@@ -84,20 +84,20 @@ for lines in input_file.read().split():
     for val in find(data, 'configmaps'):
       configmaps = (val)
 
-    dataTest = """
-      test:
-        configmaps: {}
-        images:
-            tag: {}""".format(configmaps, tag)
-    dataShit = '''#{"$imagepolicy":"poc:'''
+    dataShit = ''' # {"$imagepolicy": "poc:'''
     dataShitt = '''-policy:tag"}'''
     test = (dataShit + line + dataShitt)
     newstr = test.replace("'", "")
     print(newstr)
+    dataTest = """
+      test:
+        configmaps: {}
+        images:
+            tag: {}{} """.format(configmaps, tag,newstr)
     file = open("hello_cicd_helm_release.yaml","a")
     docs = yaml.load(dataTest) 
-    yaml.dump(docs, file, transform=PushRootLeft(4))
-    yaml.dump(newstr, file, transform=PushRootLeft(0))
+    yaml.dump(docs , file, transform=PushRootLeft(4))
+
 
 dataGlobal = """
 global:

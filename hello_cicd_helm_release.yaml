@@ -18,13 +18,11 @@ spec:
     test:
       configmaps: test
       images:
-        tag: latest
-'#{"$imagepolicy":"poc:refael-policy:tag"}'
+        tag: latest         # {"$imagepolicy": "poc:refael-policy:tag"} 
     test:
       configmaps: test
       images:
-        tag: 5
-'#{"$imagepolicy":"poc:matan-policy:tag"}'
+        tag: 5         # {"$imagepolicy": "poc:matan-policy:tag"} 
     global:
       ingress:
         annotations:
