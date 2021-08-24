@@ -1,0 +1,8 @@
+nob==0.5.5
+pyaml-env==1.1.1
+systemd-python==234
+PyYAML==5.4.1
+pathlib==1.0.1
+ruamel.yaml==0.17.10
+ruamel.yaml.clib==0.2.6
+

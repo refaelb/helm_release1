@@ -86,9 +86,8 @@ for lines in input_file.read().split():
 
     dataShit = ''' # {"$imagepolicy": "poc:'''
     dataShitt = '''-policy:tag"}'''
-    test = (dataShit + line + dataShitt)
-    newstr = test.replace("'", "")
-    print(newstr)
+    shit = (dataShit + line + dataShitt)
+    newstr = shit.replace("'", "")
     dataTest = """
       test:
         configmaps: {}
