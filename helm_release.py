@@ -32,7 +32,7 @@ class PushRootLeft:
 
 
 yaml = ruamel.yaml.YAML()
-yaml.indent(mapping=2) # not necessary, this is the default
+yaml.indent(mapping=2)
 yaml.preserve_quotes = True
 
 
@@ -62,7 +62,7 @@ spec:
             interval: 1m
     values:
 """
-chdir("/home/mattan/Desktop/scripts/helm_release1")
+
 file = open("hello_cicd_helm_release.yaml","w+")
 docs = yaml.load(data)
 yaml.dump(docs, file, transform=PushRootLeft(0))
@@ -73,57 +73,41 @@ file.close()
 input_file = open(imageFile,"r")
 for lines in input_file.read().split():
     line = lines[lines.find("/")+1:]
-    chdir("/home/mattan/Desktop/scripts/helm_release1/home_dir")
-    stream = open(line+'/values.yaml', 'r')
-    data = yaml.load(stream)
+    chdir("home_dir")
+    file = open(line+'/values.yaml', 'r')
+    data = yaml.load(file)
     for val in find(data, 'tag'):
       tag = (val)
-    chdir("/home/mattan/Desktop/scripts/helm_release1")
+    chdir("../")
     stream = open('configmap.yaml', 'r')
     data = yaml.load(stream)
     for val in find(data, 'configmaps'):
       configmaps = (val)
 
-    data = """
+    dataTest = """
       test:
         configmaps: {}
         images:
-            tag: {} 
-    """.format(configmaps, tag)
-    chdir("/home/mattan/Desktop/scripts/helm_release1")
+            tag: {}""".format(configmaps, tag)
+    dataShit = '''#{"$imagepolicy":"poc:'''
+    dataShitt = '''-policy:tag"}'''
+    test = (dataShit + line + dataShitt)
+    newstr = test.replace("'", "")
+    print(newstr)
     file = open("hello_cicd_helm_release.yaml","a")
-    docs = yaml.load(data)
+    docs = yaml.load(dataTest) 
     yaml.dump(docs, file, transform=PushRootLeft(4))
-    file.close()
-    
+    yaml.dump(newstr, file, transform=PushRootLeft(0))
 
-
-    # dat = str('{{" $imagepolicy": "poc:{}-policy:tag " }}').format(line)
-    # dat_braces = f" { dat }"
-    # print(dat_braces)
-
-    # chdir("/home/mattan/Desktop/scripts")
-    # file = open("hello_cicd_helm_release.yaml","a+")
-    # docs = yaml.load(dat_braces,  Loader=yaml.FullLoader)
-    # yaml.dump(docs, file)
-    # file.close()
-
-
-
-data = """
+dataGlobal = """
 global:
   ingress:
 """
+dataIngres = popen("yq e '.common.global.ingress'  ingress.yaml ").read()
 file = open("hello_cicd_helm_release.yaml","a+")
-docs = yaml.load(data)
-yaml.dump(docs, file, transform=PushRootLeft(4))
-file.close()
+docsGlobal = yaml.load(dataGlobal)
+docsIngres = yaml.load(dataIngres)
+yaml.dump(docsGlobal, file, transform=PushRootLeft(4))
+yaml.dump(docsIngres, file, transform=PushRootLeft(8))
 
-
-data = popen("yq e '.common.global.ingress'  ingress.yaml ").read()
-# print (data)
-file = open("hello_cicd_helm_release.yaml","a+")
-docs = yaml.load(data)
-yaml.dump(docs, file, transform=PushRootLeft(8))
-file.close()
 

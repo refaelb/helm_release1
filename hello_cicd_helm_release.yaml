@@ -19,10 +19,12 @@ spec:
       configmaps: test
       images:
         tag: latest
+'#{"$imagepolicy":"poc:refael-policy:tag"}'
     test:
       configmaps: test
       images:
         tag: 5
+'#{"$imagepolicy":"poc:matan-policy:tag"}'
     global:
       ingress:
         annotations:
