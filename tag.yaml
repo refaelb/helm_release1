@@ -17,5 +17,5 @@ repository: shoval
 securityContext: null
 service: null
 serviceAccount: null
-tag: latest
+tag: 3
 type: ClusterIP

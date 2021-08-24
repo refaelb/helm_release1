@@ -17,5 +17,5 @@ repository: matan
 securityContext: null
 service: null
 serviceAccount: null
-tag: latest
+tag: 5
 type: ClusterIP

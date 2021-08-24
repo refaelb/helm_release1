@@ -17,5 +17,5 @@ repository: dor
 securityContext: null
 service: null
 serviceAccount: null
-tag: latest
+tag: 4
 type: ClusterIP

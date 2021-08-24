@@ -14,15 +14,15 @@ spec:
         name: testrepo
         namespace: poc
       interval: 1m
-  values: 
+  values:
     test:
-      configmaps: []
+      configmaps: test
       images:
         tag: latest
     test:
-      configmaps: []
+      configmaps: test
       images:
-        tag: latest
+        tag: 5
     global:
       ingress:
         annotations:
@@ -31,6 +31,6 @@ spec:
         - host: example.com
           paths:
           - path: /isAlive
-            port: 3000
+            port: 3001
             service: test
         tls: []

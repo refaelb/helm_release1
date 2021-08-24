@@ -3,8 +3,9 @@ from os import read, write, chdir, system, popen
 from pathlib import Path
 from nob import Nob
 import sys
-import ruamel.yaml
+import ruamel.yaml 
 import yaml
+from ruamel.yaml import YAML  
 
 def find(d, tag):
     if tag in d:
@@ -42,16 +43,43 @@ args = parser.parse_args()
 imageFile = (args.file_path)
 
 
+data = """
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: hello-cicd-test
+    namespace: poc
+spec:
+    interval: 1m
+    chart:
+        spec:
+            chart: hello-cicd-helm
+            version: '0.1.0'
+            sourceRef:
+                kind: HelmRepository
+                name: testrepo
+                namespace: poc
+            interval: 1m
+    values:
+"""
+chdir("/home/mattan/Desktop/scripts/helm_release1")
+file = open("hello_cicd_helm_release.yaml","w+")
+docs = yaml.load(data)
+yaml.dump(docs, file, transform=PushRootLeft(0))
+file.close()
+
+
+
 input_file = open(imageFile,"r")
 for lines in input_file.read().split():
     line = lines[lines.find("/")+1:]
-    chdir("./home_dir")
+    chdir("/home/mattan/Desktop/scripts/helm_release1/home_dir")
     stream = open(line+'/values.yaml', 'r')
     data = yaml.load(stream)
     for val in find(data, 'tag'):
       tag = (val)
-    chdir("/home/mattan/Desktop/scripts")
-    stream = open('values1.yaml', 'r')
+    chdir("/home/mattan/Desktop/scripts/helm_release1")
+    stream = open('configmap.yaml', 'r')
     data = yaml.load(stream)
     for val in find(data, 'configmaps'):
       configmaps = (val)
@@ -62,7 +90,7 @@ for lines in input_file.read().split():
         images:
             tag: {} 
     """.format(configmaps, tag)
-    chdir("/home/mattan/Desktop/scripts")
+    chdir("/home/mattan/Desktop/scripts/helm_release1")
     file = open("hello_cicd_helm_release.yaml","a")
     docs = yaml.load(data)
     yaml.dump(docs, file, transform=PushRootLeft(4))
@@ -92,7 +120,7 @@ yaml.dump(docs, file, transform=PushRootLeft(4))
 file.close()
 
 
-data = popen("yq e '.common.global.ingress'  values.yaml ").read()
+data = popen("yq e '.common.global.ingress'  ingress.yaml ").read()
 # print (data)
 file = open("hello_cicd_helm_release.yaml","a+")
 docs = yaml.load(data)

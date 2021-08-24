@@ -4,7 +4,7 @@ autoscaling:
   maxReplicas: 100
   minReplicas: 1
   targetCPUUtilizationPercentage: 80
-configmaps: []
+configmaps: test
 fullnameOverride: test
 images:
   pullPolicy: Always
