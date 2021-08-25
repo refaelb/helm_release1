@@ -35,40 +35,43 @@ yaml = ruamel.yaml.YAML()
 yaml.indent(mapping=2)
 yaml.preserve_quotes = True
 
-
 parser = argparse.ArgumentParser(description='Personal information')
 parser.add_argument('-f', dest='file_path', type=str, help='file path')
+parser.add_argument('-name', dest='name', type=str, help='name')
+parser.add_argument('-r', dest='repository', type=str, help='repository')
+parser.add_argument('-n', dest='namespace', type=str, help='namespace')
+parser.add_argument('-c', dest='chart_name', type=str, help='chart name')
 
 args = parser.parse_args()
 imageFile = (args.file_path)
-
+nameSpace = (args.namespace)
+chartName = (args.chart_name)
+repository = (args.repository)
+name = (args.name)
 
 data = """
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-    name: hello-cicd-test
-    namespace: poc
+    name: {}
+    namespace: {}
 spec:
     interval: 1m
     chart:
         spec:
-            chart: hello-cicd-helm
+            chart: {}
             version: '0.1.0'
             sourceRef:
                 kind: HelmRepository
-                name: testrepo
-                namespace: poc
+                name: {}
+                namespace: {}
             interval: 1m
     values:
-"""
-
+""".format(name,nameSpace,chartName,repository,nameSpace)
 file = open("hello_cicd_helm_release.yaml","w+")
 docs = yaml.load(data)
-yaml.dump(docs, file, transform=PushRootLeft(0))
+yaml.dump(docs, file)
 file.close()
-
-
 
 input_file = open(imageFile,"r")
 for lines in input_file.read().split():
@@ -96,7 +99,6 @@ for lines in input_file.read().split():
     file = open("hello_cicd_helm_release.yaml","a")
     docs = yaml.load(dataTest) 
     yaml.dump(docs , file, transform=PushRootLeft(4))
-
 
 dataGlobal = """
 global:
