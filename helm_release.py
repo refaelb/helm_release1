@@ -6,7 +6,7 @@ import sys
 import ruamel.yaml 
 import yaml
 from ruamel.yaml import YAML  
-from pushRootLeft import PushRootLeft
+from classes.pushRootLeft import PushRootLeft
 
 dataHelmRelease = """
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -41,12 +41,12 @@ ingress_block = ("yq e '.common.global.ingress'  umbrella/{}/values.yaml ")
 
 
 ### Searches within a file for the value ###
-def find(File, value):
-    if value in File:
-        yield File[value]
-    for k, v in File.items():
-        if isinstance(v, dict):
-            for i in find(v, value):
+def find(File, variable):
+    if variable in File:
+        yield File[variable]
+    for key, value in File.items():
+        if isinstance(value, dict):
+            for i in find(value, variable):
                 yield i
 
 
