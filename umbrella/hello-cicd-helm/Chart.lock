@@ -1,0 +1,9 @@
+dependencies:
+- name: common
+  repository: file://../common/
+  version: 0.1.0
+- name: test
+  repository: file://../test/
+  version: 0.1.0
+digest: sha256:d7cbb9b27c016e3d70b8c97725881f582809bd4065b884958366584bec497c5c
+generated: "2021-08-08T13:18:54.686851965+03:00"

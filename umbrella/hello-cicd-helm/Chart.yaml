@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: 1.16.0
+dependencies:
+- name: common
+  repository: file://../common/
+  version: 0.1.0
+- name: test
+  repository: file://../test/
+  version: 0.1.0
+description: A Helm chart for Kubernetes
+name: hello-cicd-helm
+type: application
+version: 0.3.0

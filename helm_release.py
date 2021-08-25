@@ -8,7 +8,7 @@ import yaml
 from ruamel.yaml import YAML  
 from pushRootLeft import PushRootLeft
 
-data1 = """
+dataHelmRelease = """
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
@@ -27,17 +27,17 @@ spec:
             interval: 1m
     values:
 """
-data2 = ''' # {"$imagepolicy": "poc:'''
-data3 = '''-policy:tag"}'''
-data4 = """
+dataImagePolicy = ''' # {"$imagepolicy": "poc:'''
+dataImageTag = '''-policy:tag"}'''
+dataimage = """
 {}:
 images:
     tag: {}{} """
-data5 = """
+dataglobal = """
 global:
   ingress:
 """
-data6 = popen("yq e '.common.global.ingress'  umbrella/{}/values.yaml ")
+ingress_block = ("yq e '.common.global.ingress'  umbrella/{}/values.yaml ")
 
 
 ### Searches within a file for the value ###
@@ -71,7 +71,7 @@ name = (args.name)
 father_chart = (args.father_chart)
 
 file = open("{}.yaml".format(name),"w+")
-docs = yaml.load(data1.format(name,nameSpace,chartName,repository,nameSpace))
+docs = yaml.load(dataHelmRelease.format(name,nameSpace,chartName,repository,nameSpace))
 yaml.dump(docs, file)
 file.close()
 
@@ -84,16 +84,17 @@ for lines in input_file.read().split():
     for val in find(data, 'tag'):
       tag = (val)
     chdir("../")
-    shit = (data2 + line + data3)
+    shit = (dataImagePolicy + line + dataImageTag)
     newstr = shit.replace("'", "")
     
     file = open("{}.yaml".format(name),"a")
-    docs = yaml.load(data4.format(line, tag,newstr)) 
+    docs = yaml.load(dataimage.format(line, tag,newstr)) 
     yaml.dump(docs , file, transform=PushRootLeft(4))
 
 file = open("{}.yaml".format(name),"a+")
-docsGlobal = yaml.load(data5)
-docsIngres = yaml.load(data6.format(father_chart)).read()
+docsGlobal = yaml.load(dataglobal)
+dataIngres = popen(ingress_block.format(father_chart)).read()
+docsIngres = yaml.load(dataIngres)
 yaml.dump(docsGlobal, file, transform=PushRootLeft(4))
 yaml.dump(docsIngres, file, transform=PushRootLeft(8))
 
