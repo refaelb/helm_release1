@@ -41,6 +41,7 @@ parser.add_argument('-name', dest='name', type=str, help='name')
 parser.add_argument('-r', dest='repository', type=str, help='repository')
 parser.add_argument('-n', dest='namespace', type=str, help='namespace')
 parser.add_argument('-c', dest='chart_name', type=str, help='chart name')
+parser.add_argument('-father-chart', dest='father_chart', type=str, help='father chart')
 
 args = parser.parse_args()
 imageFile = (args.file_path)
@@ -48,6 +49,7 @@ nameSpace = (args.namespace)
 chartName = (args.chart_name)
 repository = (args.repository)
 name = (args.name)
+father_chart = (args.father_chart)
 
 data = """
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
@@ -68,7 +70,7 @@ spec:
             interval: 1m
     values:
 """.format(name,nameSpace,chartName,repository,nameSpace)
-file = open("hello_cicd_helm_release.yaml","w+")
+file = open("{}.yaml".format(name),"w+")
 docs = yaml.load(data)
 yaml.dump(docs, file)
 file.close()
@@ -76,27 +78,26 @@ file.close()
 input_file = open(imageFile,"r")
 for lines in input_file.read().split():
     line = lines[lines.find("/")+1:]
-    chdir("home_dir")
+    chdir("umbrella")
     file = open(line+'/values.yaml', 'r')
     data = yaml.load(file)
     for val in find(data, 'tag'):
       tag = (val)
     chdir("../")
-    stream = open('configmap.yaml', 'r')
-    data = yaml.load(stream)
-    for val in find(data, 'configmaps'):
-      configmaps = (val)
+    # stream = open('configmap.yaml', 'r')
+    # data = yaml.load(stream)
+    # for val in find(data, 'configmaps'):
+    #   configmaps = (val)
 
     dataShit = ''' # {"$imagepolicy": "poc:'''
     dataShitt = '''-policy:tag"}'''
     shit = (dataShit + line + dataShitt)
     newstr = shit.replace("'", "")
     dataTest = """
-      test:
-        configmaps: {}
+      {}:
         images:
-            tag: {}{} """.format(configmaps, tag,newstr)
-    file = open("hello_cicd_helm_release.yaml","a")
+            tag: {}{} """.format(line, tag,newstr)
+    file = open("{}.yaml".format(name),"a")
     docs = yaml.load(dataTest) 
     yaml.dump(docs , file, transform=PushRootLeft(4))
 
@@ -104,8 +105,8 @@ dataGlobal = """
 global:
   ingress:
 """
-dataIngres = popen("yq e '.common.global.ingress'  ingress.yaml ").read()
-file = open("hello_cicd_helm_release.yaml","a+")
+dataIngres = popen("yq e '.common.global.ingress'  umbrella/{}/values.yaml ".format(father_chart)).read()
+file = open("{}.yaml".format(name),"a+")
 docsGlobal = yaml.load(dataGlobal)
 docsIngres = yaml.load(dataIngres)
 yaml.dump(docsGlobal, file, transform=PushRootLeft(4))
