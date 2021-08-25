@@ -6,29 +6,48 @@ import sys
 import ruamel.yaml 
 import yaml
 from ruamel.yaml import YAML  
+from pushRootLeft import PushRootLeft
 
-def find(d, tag):
-    if tag in d:
-        yield d[tag]
-    for k, v in d.items():
+data1 = """
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+    name: {}
+    namespace: {}
+spec:
+    interval: 1m
+    chart:
+        spec:
+            chart: {}
+            version: '0.1.0'
+            sourceRef:
+                kind: HelmRepository
+                name: {}
+                namespace: {}
+            interval: 1m
+    values:
+"""
+data2 = ''' # {"$imagepolicy": "poc:'''
+data3 = '''-policy:tag"}'''
+data4 = """
+{}:
+images:
+    tag: {}{} """
+data5 = """
+global:
+  ingress:
+"""
+data6 = popen("yq e '.common.global.ingress'  umbrella/{}/values.yaml ")
+
+
+### Searches within a file for the value ###
+def find(File, value):
+    if value in File:
+        yield File[value]
+    for k, v in File.items():
         if isinstance(v, dict):
-            for i in find(v, tag):
+            for i in find(v, value):
                 yield i
-
-
-class PushRootLeft:
-    def __init__(self, positions=42):
-        self.positions = positions
-
-    def __call__(self, s):
-        result = []
-        for line in s.splitlines(True):
-            sline = line.strip()
-            if not sline or sline[0] == '#':
-                result.append(line)
-            else:
-                result.append(' ' * self.positions + line)
-        return ''.join(result)
 
 
 yaml = ruamel.yaml.YAML()
@@ -51,27 +70,8 @@ repository = (args.repository)
 name = (args.name)
 father_chart = (args.father_chart)
 
-data = """
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
-kind: HelmRelease
-metadata:
-    name: {}
-    namespace: {}
-spec:
-    interval: 1m
-    chart:
-        spec:
-            chart: {}
-            version: '0.1.0'
-            sourceRef:
-                kind: HelmRepository
-                name: {}
-                namespace: {}
-            interval: 1m
-    values:
-""".format(name,nameSpace,chartName,repository,nameSpace)
 file = open("{}.yaml".format(name),"w+")
-docs = yaml.load(data)
+docs = yaml.load(data1.format(name,nameSpace,chartName,repository,nameSpace))
 yaml.dump(docs, file)
 file.close()
 
@@ -84,31 +84,16 @@ for lines in input_file.read().split():
     for val in find(data, 'tag'):
       tag = (val)
     chdir("../")
-    # stream = open('configmap.yaml', 'r')
-    # data = yaml.load(stream)
-    # for val in find(data, 'configmaps'):
-    #   configmaps = (val)
-
-    dataShit = ''' # {"$imagepolicy": "poc:'''
-    dataShitt = '''-policy:tag"}'''
-    shit = (dataShit + line + dataShitt)
+    shit = (data2 + line + data3)
     newstr = shit.replace("'", "")
-    dataTest = """
-      {}:
-        images:
-            tag: {}{} """.format(line, tag,newstr)
+    
     file = open("{}.yaml".format(name),"a")
-    docs = yaml.load(dataTest) 
+    docs = yaml.load(data4.format(line, tag,newstr)) 
     yaml.dump(docs , file, transform=PushRootLeft(4))
 
-dataGlobal = """
-global:
-  ingress:
-"""
-dataIngres = popen("yq e '.common.global.ingress'  umbrella/{}/values.yaml ".format(father_chart)).read()
 file = open("{}.yaml".format(name),"a+")
-docsGlobal = yaml.load(dataGlobal)
-docsIngres = yaml.load(dataIngres)
+docsGlobal = yaml.load(data5)
+docsIngres = yaml.load(data6.format(father_chart)).read()
 yaml.dump(docsGlobal, file, transform=PushRootLeft(4))
 yaml.dump(docsIngres, file, transform=PushRootLeft(8))
 
